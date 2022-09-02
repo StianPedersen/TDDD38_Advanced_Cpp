@@ -1,0 +1,12 @@
+Array init:
+cppreference wants to initalize 
+std::array<std::string,3> a = {"st","ia","np};
+- Why not in course?
+- Cppreference has #include <array>
+
+PointerPointer:
+- declaring a pointerpointer: 
+    char **c_pointpoint{new char *{new char{'s'}}};
+  Correct? can you do it like this?
+- When couting both *c_pointpoint and **c_pointpoint gives
+  correct result

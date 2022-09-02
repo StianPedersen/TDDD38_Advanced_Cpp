@@ -1,0 +1,8 @@
+Left hand side values
+    - Will refer to the same object every time we use it
+    - Left values has identity
+
+Right hand side values
+    - Generally just not lvalues
+    - They are temporary, the expression refers to a value and
+      not a object. i.e., 5, 3.14f. These are just values.

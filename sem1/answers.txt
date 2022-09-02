@@ -1,0 +1,20 @@
+Basic language constructs
+
+1
+a) Left hand side value (glvalue)
+b) Pure right hand side value
+c) glvalue
+d) rvalue
+e) xvalue
+f) lvalue
+g) rvalue
+h) lvalue
+
+2
+a) char* c
+b) int array[10]
+c) std::string *array[3]
+d) char** c
+e) int const i
+f) int const* i
+g) int* const i
