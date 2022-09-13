@@ -27,6 +27,9 @@ int main()
                                  &word3};
 
     char **c_pointpoint{new char *{new char{'s'}}};
+    std::cout << c_pointpoint << "\n"
+              << *c_pointpoint << "\n"
+              << **c_pointpoint << endl;
 
     int const i{3};
     cout << i << endl;
