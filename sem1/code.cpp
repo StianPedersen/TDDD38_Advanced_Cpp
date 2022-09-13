@@ -1,19 +1,19 @@
 #include <iostream>
 using namespace std;
 
-// int &get()
-// {
-//     int x{5};
-//     return x;
-// }
-int const *get2()
-{
-    return new int{5};
-}
 int main()
 {
-    // cout << get() << endl;
-    int const *const x{get2()};
-    cout << x << endl;
-    delete x;
+    // int a(int);
+    // cout << a << endl;
+    // int b(int(i));
+    // cout << b << endl;
+    // int c(int (*i)());
+    // cout << c << endl;
+    // int a(int *const);
+    // int a const();
+    // int a(int const *(*)());
+    int i4 = {};
+    cout << i4 << endl;
+    string str4(3, 'a');
+    cout << str4 << endl;
 }

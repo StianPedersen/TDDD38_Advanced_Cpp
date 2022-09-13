@@ -18,3 +18,51 @@ d) char** c
 e) int const i
 f) int const* i
 g) int* const i
+
+3) Done
+
+4)
+a) This is legal, this declares a int function taking in a int i
+b) This is legal, this declares an function that takes an int and returns an int
+c) This is legal, int function taking an int returning an int, redundant paranthesis
+d) This is legal, i is a function pointer to a function returning int
+e) This is legal, A function returning an int taking an constant pointer to an int
+f) Not legal, const is a safe word
+g) This is legal, pointer to a void function returning a pointer to a constant int
+h) This is legal, pointer function that takes in a int returning an int
+
+5)
+With this line of code we set x to be a reference to a function taking
+two ints and reuturning an int
+
+6)
+13 and 12
+
+7)
+a) Legal, gives the value 0
+b) Legal, gives the  value 2
+c) Legal, gives the value 1
+d) Legal, gives the default value 0
+e) Illegal, this is a function
+f) Legal, initializes an empty string
+g) LEgal, initializes the string to "Hello"
+h) Legal, initializes the string to "aaa"
+i) Legal, copies the content of str2 to str5 which is "Hello"
+j) Invalid, brace initialization checks for narrowing, which in this case it does
+,k,l) Legal, rounding? 
+
+
+8) Done
+
+9)
+Line 11 converts "main" function to a function-pointer
+Line 14 converts the characcter 'A' to int ASCII value.
+Line 15 converts c and 'A' to int ASCII values
+
+Line 17 converts 0 to an unsignned int and gives the value
+459.... due to unsigned ints only having valid numbers
+above 0
+
+
+
+
