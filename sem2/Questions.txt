@@ -1,3 +1,7 @@
 1)
 What is implicit explicit....
 
+2)
+Compound assignment? Is it really necessary?
+https://en.cppreference.com/w/cpp/language/operator_arithmetic
+Shows in-class and outside class definitions, can these not be used?

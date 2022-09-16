@@ -23,7 +23,7 @@ Cls ident(Cls c)
 }
 int main()
 {
-    Cls c1{Cls{}};     // Cout M
-    Cls c2{ident(c1)}; // Cout C
-    Cls c3{c2};        // Cout M
+    Cls c1{Cls{}};     // Cout C
+    Cls c2{ident(c1)}; // Cout M? Copy elision?
+    Cls c3{c2};        // Cout C
 }
