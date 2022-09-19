@@ -49,33 +49,34 @@ int main()
         assert(oss.str() == "(0.5, 1.5)");
     }
 
-    // // check input stream operator
-    // {
-    //     istringstream iss{"(0.25, 0.125)"};
-    //     Vector v{};
-    //     assert(iss >> v);
-    //     assert((v == Vector{0.25, 0.125}));
-    // }
-    // { // check that we can read multiple values with arbitrary
-    //     // whitespaces between each component
-    //     istringstream iss{"( 1, 0)      (    2,     0 )       (   3.00000,   0.000 ) "};
-    //     Vector v{};
-    //     for (int i{0}; i < 3; ++i)
-    //     {
-    //         assert(iss >> v);
-    //         assert((v == Vector{i + 1.0, 0}));
-    //     }
-    // }
-    // { // check that the stream operator checks for the parenthesis
-    //     istringstream iss{"(1, 0"};
-    //     Vector v{};
-    //     assert(!(iss >> v));
-    //     assert(v == Vector{});
-    // }
-    // { // check for error
-    //     istringstream iss{"1 0"};
-    //     Vector v{};
-    //     assert(!(iss >> v));
-    //     assert(v == Vector{});
-    // }
+    // check input stream operator
+    {
+        istringstream iss{"(0.25, 0.125)"};
+        Vector v{};
+        assert(iss >> v);
+        assert((v == Vector{0.25, 0.125}));
+    }
+
+    { // check that we can read multiple values with arbitrary
+      // whitespaces between each component
+        istringstream iss{"( 1, 0)      (    2,     0 )       (   3.00000,   0.000 ) "};
+        Vector v{};
+        for (int i{0}; i < 3; ++i)
+        {
+            assert(iss >> v);
+            assert((v == Vector{i + 1.0, 0}));
+        }
+    }
+    { // check that the stream operator checks for the parenthesis
+        istringstream iss{"(1, 0"};
+        Vector v{};
+        assert(!(iss >> v));
+        assert(v == Vector{});
+    }
+    { // check for error
+        istringstream iss{"1 0"};
+        Vector v{};
+        assert(!(iss >> v));
+        assert(v == Vector{});
+    }
 }

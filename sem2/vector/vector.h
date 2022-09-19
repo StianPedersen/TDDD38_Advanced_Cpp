@@ -17,8 +17,9 @@ public:
 
     Vector operator-();
 
-    // Ostreams
+    // Streams
     friend std::ostream &operator<<(std::ostream &os, Vector const &rhs);
+    friend std::istream &operator>>(std::istream &is, Vector &rhs);
 
     // Functions
     double length() const;
