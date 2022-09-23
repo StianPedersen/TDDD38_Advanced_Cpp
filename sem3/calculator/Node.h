@@ -32,7 +32,7 @@ public:
 
   virtual double evaluate() const = 0;
   virtual void print(std::ostream &os) const = 0;
-  virtual void print_tree(std::ostream &os, int depth) const = 0;
+  virtual void print_tree(std::ostream &os, int depth = 0) const = 0;
   virtual Node *clone() = 0;
 };
 
@@ -44,7 +44,7 @@ public:
 
   double evaluate() const override;
   void print(std::ostream &os) const override;
-  void print_tree(std::ostream &os, int depth) const override;
+  void print_tree(std::ostream &os, int depth = 0) const override;
   Node *clone() override;
 
 private:
@@ -62,10 +62,7 @@ public:
   Operator &operator=(Operator const &) = delete;
   Operator &operator=(Operator &&) = delete;
 
-  double evaluate() const override;
-  void print(std::ostream &os) const override;
-  void print_tree(std::ostream &os, int depth) const override;
-  Node *clone() override;
+  void print_tree(std::ostream &os, int depth = 0) const override;
 
 protected:
   Node *left;
@@ -78,7 +75,6 @@ public:
   using Operator::Operator;
   double evaluate() const override;
   void print(std::ostream &os) const override;
-  void print_tree(std::ostream &os, int depth) const override;
   Node *clone() override;
 };
 
@@ -88,7 +84,6 @@ public:
   using Addition::Addition;
   double evaluate() const override;
   void print(std::ostream &os) const override;
-  void print_tree(std::ostream &os, int depth) const override;
   Node *clone() override;
 };
 
@@ -99,7 +94,6 @@ public:
 
   double evaluate() const override;
   void print(std::ostream &os) const override;
-  void print_tree(std::ostream &os, int depth) const override;
   Node *clone() override;
 };
 
@@ -110,6 +104,5 @@ public:
 
   double evaluate() const override;
   void print(std::ostream &os) const override;
-  void print_tree(std::ostream &os, int depth) const override;
   Node *clone() override;
 };
