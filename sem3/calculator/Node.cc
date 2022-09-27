@@ -28,11 +28,43 @@ Node *Number::clone()
 void Operator::print_tree(std::ostream &os, int depth) const
 {
   left->print_tree(os, depth + 3);
-  os << std::setw(depth) << "/"
+  os << std::setw(depth) << ""
+     << " / "
      << "\n";
-  os << std::setw(depth) << "%"
-     << "\n";
-  os << std::setw(depth) << "\\"
+  // os << std::setw(depth) << this->get_operator() << "\n";
+  if (typeid(*this) == typeid(Multiplication))
+  {
+    os << std::setw(depth) << ""
+       << "*"
+       << "\n";
+  }
+  else if (typeid(*this) == typeid(Subtraction))
+  {
+    os << std::setw(depth) << ""
+       << "-"
+       << "\n";
+  }
+  else if (typeid(*this) == typeid(Addition))
+  {
+    os << std::setw(depth) << ""
+       << "+"
+       << "\n";
+  }
+  else if (typeid(*this) == typeid(Division))
+  {
+    os << std::setw(depth) << ""
+       << "/"
+       << "\n";
+  }
+  else
+  {
+    os << std::setw(depth) << ""
+       << "ERROR"
+       << "\n";
+  }
+
+  os << std::setw(depth) << ""
+     << " \\ "
      << "\n";
   right->print_tree(os, depth + 3);
 };

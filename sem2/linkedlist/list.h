@@ -1,3 +1,4 @@
+#include <memory>
 class List
 {
 private:
@@ -7,11 +8,11 @@ private:
         Link(int i) : value{i} {};
 
         int value;
-        Link *nxt = nullptr;
+        std::unique_ptr<Link> nxt = nullptr;
         bool print_link();
     };
 
-    Link *head;
+    std::unique_ptr<Link> head;
 
 public:
     List() : head{nullptr} {};
@@ -20,13 +21,13 @@ public:
     ~List();
 
     void insert(int);
-    void insert_next(Link *, Link *);
+    void insert_next(std::unique_ptr<Link> &, std::unique_ptr<Link> &);
 
     void remove(int);
-    void remove_next(Link *, Link *, int);
+    void remove_next(std::unique_ptr<Link> &, std::unique_ptr<Link> &, int);
 
     int at(int);
-    int find(Link *, int);
+    int find(std::unique_ptr<Link> &, int);
 
     void print_list();
 };

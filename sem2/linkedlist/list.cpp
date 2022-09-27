@@ -3,18 +3,18 @@
 
 List::~List(){};
 
-void List::insert_next(Link *cur, Link *ins)
+void List::insert_next(std::unique_ptr<Link> &cur, std::unique_ptr<Link> &ins)
 {
     if (cur->nxt == nullptr)
     {
-        cur->nxt = ins;
+        cur->nxt = std::move(ins);
         ins->nxt = nullptr;
         return;
     }
     else if (ins->value < cur->value)
     {
-        ins->nxt = cur->nxt;
-        cur->nxt = ins;
+        ins->nxt = std::move(cur->nxt);
+        cur->nxt = std::move(ins);
         return;
     }
     else
@@ -25,16 +25,16 @@ void List::insert_next(Link *cur, Link *ins)
 
 void List::insert(int i)
 {
-    Link *tmp = new Link{i};
+    std::unique_ptr<Link> tmp(std::make_unique<Link>(i));
     if (head == nullptr)
     {
-        head = tmp;
+        head = std::move(tmp);
         return;
     }
     else if (i < head->value)
     {
-        tmp->nxt = head;
-        head = tmp;
+        tmp->nxt = std::move(head);
+        head = std::move(tmp);
         return;
     }
     else
@@ -60,7 +60,7 @@ bool List::Link::print_link()
     }
 }
 
-void List::remove_next(Link *cur, Link *check, int i)
+void List::remove_next(std::unique_ptr<Link> &cur, std::unique_ptr<Link> &check, int i)
 {
     if (check->value == i)
     {
@@ -71,7 +71,7 @@ void List::remove_next(Link *cur, Link *check, int i)
         }
         else
         {
-            cur->nxt = check->nxt;
+            cur->nxt = std::move(check->nxt);
             return;
         }
     }
@@ -89,7 +89,7 @@ void List::remove(int i)
     {
         if (head->nxt != nullptr)
         {
-            head = head->nxt;
+            head = std::move(head->nxt);
             return;
         }
         else
@@ -114,7 +114,7 @@ int List::at(int i)
     }
 }
 
-int List::find(Link *cur, int i)
+int List::find(std::unique_ptr<Link> &cur, int i)
 {
     if (i == 0)
         return cur->value;
