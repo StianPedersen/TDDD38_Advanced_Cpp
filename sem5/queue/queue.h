@@ -19,6 +19,10 @@ public:
     void clear();
     T &front() const;
 
+    // Member function template
+    template <size_t M>
+    Queue<T, N + M> copy_and_expand();
+
 private:
     T array[N];
     int head;
