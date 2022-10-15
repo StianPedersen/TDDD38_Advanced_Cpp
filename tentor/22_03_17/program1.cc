@@ -1,6 +1,8 @@
 #include <cassert>
 #include <iostream>
 
+// TODO
+// Ej gjort ordentligt, riktigt svår
 void test()
 {
     std::cout << "Function call!" << std::endl;
