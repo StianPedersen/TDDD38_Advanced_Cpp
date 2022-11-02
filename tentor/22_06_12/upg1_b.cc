@@ -55,3 +55,6 @@ int main()
     get_index<0>(list1) = 10;
     assert(get_index<0>(list1) == 10);
 }
+// ‘std::pair<int, std::pair<double, std::pair<char, std::pair<std::__cxx11::basic_string<char>, Sentinel*> > > >’
+// to
+// ‘std::pair<double, std::pair<char, std::pair<std::__cxx11::basic_string<char>, Sentinel*> > >&’
