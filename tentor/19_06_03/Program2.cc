@@ -10,8 +10,12 @@ class Printable
 {
 public:
     Printable() = default;
-    virtual void print(ostream &os) const;
     virtual ~Printable() = default;
+    Printable(Printable const &);            // Copy constructor
+    Printable(Printable &&);                 // Move constructor
+    Printable &operator=(Printable const &); // Copy assignment
+    Printable &operator=(Printable &&);      // Move assignment
+    virtual void print(ostream &os) const = 0;
 };
 
 class Serializable
@@ -19,8 +23,8 @@ class Serializable
 public:
     Serializable() = default;
     virtual ~Serializable() = default;
-    virtual string serialize() const;
-    virtual bool deserialize(string const &str);
+    virtual string serialize() const = 0;
+    virtual bool deserialize(string const &str) = 0;
 };
 
 class Message : public Printable
@@ -33,7 +37,7 @@ private:
     string msg;
 };
 
-class Integer : public Printable, Serializable
+class Integer : public Printable, public Serializable
 {
 public:
     Integer(int const &i) : Printable(), Serializable(), data{i} {};
@@ -86,7 +90,7 @@ void print(ostream &os, vector<Printable *> const &v)
     {
         /* Call print on obj with os as parameter */
         obj->print(os);
-        os << endl;
+        // os << endl;
     }
 }
 
@@ -99,20 +103,25 @@ int main()
         new Integer{100053},
         new Integer{-5}};
 
-    // {
-    //     vector<string> result{serialize(v)};
-    //     assert((result == vector<string>{"0", "100053", "-5"}));
-    // }
+    {
+        vector<string> result{serialize(v)};
+        assert((result == vector<string>{"0", "100053", "-5"}));
+    }
 
-    // {
-    //     ostringstream oss{};
-    //     print(oss, v);
-    //     assert(oss.str() == "Hello there\n0\nThis is a message\n100053\n-5\n");
-    // }
+    {
+        ostringstream oss{};
+        print(oss, v);
+        // cout << oss.str() << endl;
+        assert(oss.str() == "Hello there\n0\nThis is a message\n100053\n-5\n");
+    }
 
-    // {
-    //     Integer i{0};
-    //     assert(i.deserialize("15"));
-    //     assert(i.serialize() == "15");
-    // }
+    {
+        Integer i{0};
+        assert(i.deserialize("15"));
+        assert(i.serialize() == "15");
+    }
+    for (auto e : v)
+    {
+        delete e;
+    }
 }
