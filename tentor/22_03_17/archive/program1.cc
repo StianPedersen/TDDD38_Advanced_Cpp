@@ -1,4 +1,8 @@
+#include <cassert>
 #include <iostream>
+
+// TODO
+// Ej gjort ordentligt, riktigt svår
 void test()
 {
     std::cout << "Function call!" << std::endl;
@@ -39,9 +43,21 @@ public:
         : storage{new Callable<T>{std::forward<T>(callback)}}
     {
     }
-    class Callable_Base
+    Ret operator()(Args... list)
     {
-    public:
+        return storage->call(list...);
+    }
+    template <typename T>
+    Function &operator=(T &&callback)
+    {
+        delete storage;
+        storage = new Callable<T>{std::forward<T>(callback)};
+        return *this;
+    }
+
+private:
+    struct Callable_Base
+    {
         virtual Ret call(Args...) = 0;
     };
 
@@ -50,20 +66,13 @@ public:
     {
     public:
         Callable(T &&callback) : callback{std::forward<T>(callback)} {}
-
-        Ret call(Args... p) override
+        Ret call(Args... list) override
         {
-            return callback(p...);
+            return callback(list...);
         };
 
-    private:
-        T callback{};
+        T callback;
     };
-
-    Ret operator()(Args... p)
-    {
-        return storage->call(p...);
-    }
 
 private:
     Callable_Base *storage{nullptr};
