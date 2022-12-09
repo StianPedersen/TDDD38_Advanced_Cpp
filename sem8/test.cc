@@ -7,21 +7,44 @@
 #include <tuple>
 #include <array>
 #include <string>
+
 template <typename T>
 void print(std::ostream &, T const &);
 namespace range_ns
 {
+    template <typename T>
+    auto print_range(std::ostream& os, T const& c)
+    -> decltype(std::begin(c), std::declval<void>())
+    {
+        os<<"{";
+        for (auto e : c)
+            os<<e;
+        os<<"}";
+        
+    }
+
     template <typename T>
     void print_range(std::ostream &os, std::map<T, T> c)
     {
         for (auto e : c)
             os << "(" << e.first << "," << e.second << ") ";
     }
+
     template <typename T>
     void print_range(std::ostream &os, std::vector<T> c)
     {
         for (auto e : c)
             os << e;
+    }
+
+    template <typename It>
+    void print_range(std::ostream &os, It b, It e)
+    {
+      while(b != e){
+        os<<"{";
+        ::print(os,*b++);
+        os<<"}";
+      }
     }
 
     template <typename T, int N>
@@ -41,7 +64,8 @@ namespace range_ns
     }
 }
 namespace my_ns
-{
+{   
+
     template <typename T>
     void print_stuff(std::ostream &os, T const &d, long)
     {
@@ -60,6 +84,14 @@ namespace my_ns
         -> decltype(std::tuple_size<T>(), std::declval<void>())
     {
         range_ns::print_tuple(os, c, std::make_integer_sequence<int, std::tuple_size<T>::value>{});
+    }
+
+    template <typename T, std::size_t N>
+    void print_stuff(std::ostream& os, std::array<T,N> const& a, int)
+    {
+        os<<"{";
+        range_ns::print_range(os, begin(a), end(a));
+        os<<"}";
     }
 }
 
@@ -100,17 +132,16 @@ int main()
     print(std::cout, s);
     std::cout << std::endl;
 
-    // std::array<std::vector<std::string>, 2> a{
-    //     std::vector<std::string>{"ab", "c"},
-    //     std::vector<std::string>{"def", "g", "hi"}};
+    std::array<std::vector<std::string>, 2> a{
+    std::vector<std::string>{"ab", "c"},
+    std::vector<std::string>{"def", "g", "hi"}};
+    print(std::cout, a);
+    std::cout << std::endl;
 
-    // print(std::cout, a);
-    // std::cout << std::endl;
+    char const *str{"SFINAE"};
+    print(std::cout, str);
+    std::cout << std::endl;
 
-    // char const *str{"SFINAE"};
-    // print(std::cout, str);
-    // std::cout << std::endl;
-
-    // print(std::cout, "string literal");
-    // std::cout << std::endl;
+    print(std::cout, "string literal");
+    std::cout << std::endl;
 }
