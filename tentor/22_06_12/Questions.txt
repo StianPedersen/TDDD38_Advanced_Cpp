@@ -1,0 +1,16 @@
+Questions 22_06_02
+
+2. 
+What is dependent name?
+A dependent name is essentially a name that depends on a template paramter.
+
+How is it related to the keyword typename?
+it is related to the keyword typename in the way that we need to tell the compiler
+if the Dependent name is a type. Consider the following:
+    std::vector<int>::const_pointer * pt1;
+    typename std::vector<int>::const_pointer * pt1;
+The first line does not tell the compiler it is a type, therefore it will multiply lhs 
+with the rhs. By adding the typename we tell the compiler that this is a type.
+
+What ambiguity problems are related to dependent names?
+mentioned above
