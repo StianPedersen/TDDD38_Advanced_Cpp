@@ -1,4 +1,30 @@
 {
+    #include <cassert>
+#include <iostream>
+#include <list>
+#include <string>
+#include <vector>
+
+int main()
+{
+    std::vector<int> v { 1, 2, 3 };
+
+    assert(v.front() == 1);
+    prepend(v, 0);
+    assert(v.front() == 0);
+    
+    std::list<float> d { 1.2f, 3.45f, 67.8f, 9.0f };
+
+    assert(d.front() == 1.2f);
+    prepend(d, 0);
+    assert(d.front() == 0.0f);
+
+    std::string s { "ello world!" };
+
+    assert(s.front() == 'e');
+    prepend(s, 'H');
+    assert(s.front() == 'H');
+}
     "files.associations": {
         "array": "cpp",
         "atomic": "cpp",
@@ -50,5 +76,6 @@
         "ranges": "cpp",
         "span": "cpp",
         "sstream": "cpp"
-    }
+    },
+    "C_Cpp.intelliSenseEngineFallback": "enabled"
 }
