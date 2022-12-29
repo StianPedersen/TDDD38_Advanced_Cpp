@@ -2,50 +2,51 @@
 #include <iostream>
 #include <vector>
 #include <iomanip>
-using namespace std;
-
+// Element
 class Element
 {
 public:
-    Element(string const &s) : name{s} {};
+    Element(std::string const &n) : name{n} {};
     virtual ~Element() = default;
-    virtual void print(ostream &os) const = 0;
+    virtual void print(std::ostream &os) = 0;
 
 protected:
-    string name;
+    std::string const name;
 };
 
+// Label
 class Label : public Element
 {
 public:
-    Label(string const &n, string const &t) : Element(n), text(t) {}
-    void print(ostream &os) const override;
+    Label(std::string const &n, std::string const &t) : Element(n), text{t} {}
+    void print(std::ostream &os) override;
 
 private:
-    string text;
+    std::string const text;
 };
 
+// Collection
 class Collection : public Element
 {
 public:
-    Collection(string const &n) : Element(n), items{}, column_width{0} {};
-    virtual ~Collection() = default;
-    void insert(int const i);
+    Collection(std::string const &n) : Element(n), column_width{0}, items{} {};
+
+    void insert(int &i);
 
 protected:
-    virtual void print_item(ostream &os, int const &w) const;
-    vector<int> items{};
+    virtual void print_item(std::ostream &os, int const &i);
 
-private:
-    int column_width;
+    int column_width{0};
+    std::vector<int> items;
 };
 
+// Grid
 template <int width>
 class Grid : public Collection
 {
 public:
-    Grid(string const &n) : Collection(n){};
-    void print(std::ostream &os) const override;
+    Grid<width>(std::string const &n) : Collection(n){};
+    void print(std::ostream &os) override;
 
 private:
 };
@@ -53,19 +54,38 @@ private:
 class List : public Grid<1>
 {
 public:
-    List(string const &n) : Grid(n){};
-    void print_item(ostream &os, int const &w) const override;
+    List(std::string const &n) : Grid(n){};
+    void print_item(std::ostream &os, int const &i) override;
+
+private:
 };
 
-// Possible implementation for Grid::print
-// Will support printing of a grid even if the number of items is not
-// a multiple of the grid width.
+// Label functions
+void Label::print(std::ostream &os)
+{
+    os << Element::name << ": " << '"' << text << '"';
+};
+
+// Collection functions
+void Collection::print_item(std::ostream &os, int const &i)
+{
+    os << std::setw(column_width) << i;
+};
+void Collection::insert(int &i)
+{
+    if (std::to_string(i).size() > column_width)
+        column_width = std::to_string(i).size();
+
+    items.push_back(i);
+};
+
+// Grid functions
 template <int width>
-void Grid<width>::print(std::ostream &os) const
+void Grid<width>::print(std::ostream &os)
 {
     // Print header for the grid
     os << name << ":\n";
-    for (size_t i{0}; i < items.size(); ++i)
+    for (unsigned int i{0}; i < items.size(); ++i)
     {
         // print each item
         print_item(os, items[i]);
@@ -83,31 +103,14 @@ void Grid<width>::print(std::ostream &os) const
     }
 }
 
-void Label::print(ostream &os) const
+// List functions
+void List::print_item(std::ostream &os, int const &i)
 {
-    os << name << ": " << '"' << text << '"';
-}
-
-void Collection::print_item(ostream &os, int const &w) const
-{
-    os << setw(column_width) << w;
-}
-
-void Collection::insert(int const i)
-{
-    items.push_back(i);
-    string i_s = to_string(i);
-    string c_s = to_string(column_width);
-    if (i_s.size() > column_width)
-        column_width = i_s.size();
-}
-
-void List::print_item(ostream &os, int const &w) const
-{
-    os << "- [";
-    Collection::print_item(os, w);
+    os << "[";
+    Collection::print_item(os, i);
     os << "]";
-}
+};
+
 /* Expected output:
 
 My Text: "This is a text"
@@ -154,7 +157,9 @@ int main()
             // If e is of type 'Collection':
             // call insert(n) on it
             if (auto p = dynamic_cast<Collection *>(e))
+            {
                 p->insert(n);
+            };
         }
     }
 
