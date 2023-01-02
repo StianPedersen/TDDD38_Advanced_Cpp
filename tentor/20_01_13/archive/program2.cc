@@ -2,6 +2,95 @@
 #include <string>
 #include <sstream>
 #include <iostream>
+class Option
+{
+public:
+    Option(std::string const &s) : name{s} {};
+    virtual ~Option() = default;
+    virtual bool parse(std::string const &arg) = 0;
+    virtual void print(std::ostream &os); // pure virtual?
+    Option(Option const &) = delete;
+    Option &operator=(Option const &) = delete;
+
+protected:
+    std::string name;
+};
+
+class Flag : public Option
+{
+public:
+    Flag(std::string n, bool &b) : Option(n), present{b} { present = false; };
+    Flag(Flag &) = delete;
+    Flag &operator=(Flag) = delete;
+
+    bool parse(std::string const &arg) override;
+    void print(std::ostream &os) override;
+
+private:
+    bool &present;
+};
+
+template <typename T>
+class Argument : public Option
+{
+public:
+    Argument(std::string const &n, T &t) : Option(n), target{t} {};
+    Argument(Argument &) = delete;
+    Argument &operator=(Argument) = delete;
+    bool parse(std::string const &n) override;
+
+private:
+    T &target;
+};
+
+class Parser
+{
+public:
+    Parser() : options{} {};
+    void add(Option *o);
+    bool parse(std::vector<std::string> const &args);
+    void print(std::ostream &os, std::string const &program) const;
+
+private:
+    std::vector<Option *> options;
+};
+
+// Option functions
+void Option::print(std::ostream &os)
+{
+    os << name;
+};
+
+// Flag functions
+bool Flag::parse(std::string const &n)
+{
+    if (n == Option::name)
+    {
+        present = true;
+        return true;
+    }
+    return false;
+};
+void Flag::print(std::ostream &os)
+{
+    os << Option::name;
+}
+
+// Argument functions
+template <typename T>
+bool Argument<T>::parse(std::string const &n)
+{
+    std::istringstream iss{n};
+    if (iss >> target)
+        return true;
+    return false;
+};
+
+// Parser functions
+void Parser::add(Option *o)
+{
+    options.push_back(o);
+};
 
 /* This function is an implementation for the parse function of the
    Parser class. You will have to include this implementation as a
@@ -13,7 +102,7 @@
 
    In this simplified framework the position of each argument and flag
    matters. Example:
-   
+
    In main we create a parser that has two flags: -a, and --b-flag as
    well as two arguments: int and string. The following cases are allowed:
 
@@ -39,127 +128,35 @@
    complete the implementation by replacing the comments with actual
    code.
  */
-class Option{
-    public:
-        Option(std::string const& n) : name{n}{};
-
-        Option& operator=(Option const&) = delete;
-        Option(Option&) = delete;
-
-
-        virtual ~Option() = default;
-        virtual bool parse(std::string const& args) const = 0;
-        virtual void print(std::ostream& os) const;
-    protected:
-        std::string name;
-};
-
-class Flag : public Option{
-    public:
-        Flag(std::string const& n, bool& b) : Option(n),is_present{b}{is_present = false;}
-        bool parse(std::string const& args) const override;
-        void print(std::ostream& os) const override;
-    private:
-        bool& is_present;
-};
-
-template <typename T>
-class Argument : public Option
-{
-    public:
-        Argument(std::string const& n, T & t) : Option(n),target{t}{};
-        bool parse(std::string const& args) const override;
-
-    private:
-        T& target;
-};
-
-class Parser
-{
-    public:
-        bool parse(std::vector<std::string> const& args);
-        void print(std::ostream& os, std::string const& program) const;
-        void add(Option* option);
-        ~Parser()
-        {
-            for(auto e : options)
-                delete e;
-        }
-    private:
-    std::vector<Option*> options;
-};
-
-// Option
-void Option::print(std::ostream& os) const
-{
-    os<<name;
-}
-
-// Flag
-bool Flag::parse(std::string const& args) const {
-    if(args == name)
-        {
-        is_present = true;
-        return true;
-        }
-    else
-    {
-        return false;
-    }
-}
-void Flag::print(std::ostream& os) const {
-    os<<'['<<name<<']';
-}
-
-// Argument
-template<typename T>
-bool Argument<T>::parse(std::string const& args) const {
-    std::istringstream iss{args};
-
-    if(iss>>target)
-    {
-        std::cout<<"Argument added to target: "<<target<<std::endl;
-        return true;
-    }
-    else
-    {
-        return false;
-    }
-}
-
-
-// Parser
-bool Parser::parse(std::vector<std::string> const& args)
+bool Parser::parse(std::vector<std::string> const &args)
 {
     if (args.empty())
     {
         std::cerr << "No arguments given." << std::endl;
         return false;
     }
-
-    int i{0};
-    
-    for (Option* option : options)
+    // bool is_flag;
+    unsigned int i{0};
+    for (Option *option : options)
     {
-
         if (i < args.size())
         {
-            if (option->parse(args[i]))/* call parse(args[i]) on option */ 
+            // if (/* call parse(args[i]) on option */)
+            if (option->parse(args[i]))
             {
                 ++i;
             }
-            else if (typeid(Flag) != typeid(*option))/* option is not of type Flag */
+            else if (!dynamic_cast<Flag *>(option))
             {
                 std::cerr << "Unknown argument: " << args[i] << std::endl;
                 return false;
             }
         }
-        else if (typeid(Flag) != typeid(*option))/* option is not of type Flag */
+        else if (!dynamic_cast<Flag *>(option))
         {
             std::cerr << "Too few arguments" << std::endl;
             return false;
         }
-        
     }
 
     if (i < args.size())
@@ -167,34 +164,27 @@ bool Parser::parse(std::vector<std::string> const& args)
         std::cerr << "Too many arguments." << std::endl;
         return false;
     }
-    std::cout<<"Hit-sist"<<std::endl;
-    
+
     return true;
 }
+
 /* print algorithm for Parser */
-void Parser::print(std::ostream& os, std::string const& program) const
+void Parser::print(std::ostream &os, std::string const &program) const
 {
     os << "Usage: " << program;
-    for (Option * option : options)
+    for (Option *option : options)
     {
         os << " ";
-        /* call print(os) on option */
         option->print(os);
     }
     os << std::endl;
 }
 
-void Parser::add(Option* option)
-{
-    options.push_back(option);    
-}
-
-
 /*
 
   Example of usage:
 
-$ ./a.out 
+$ ./a.out
 No arguments given.
 Usage: ./a.out [-a] [--b-flag] int string
 
@@ -223,26 +213,26 @@ num == 5
 str == hello
 
  */
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
-    std::vector<std::string> args {argv + 1, argv + argc};
+    std::vector<std::string> args{argv + 1, argv + argc};
     Parser p{};
 
     bool a{};
-    p.add( new Flag{"-a", a});
+    p.add(new Flag{"-a", a});
 
     bool b{};
-    p.add(new Flag{"--b-flag", b} );
+    p.add(new Flag{"--b-flag", b});
 
     int num{};
-    p.add(new Argument<int>{"int", num} );
+    p.add(new Argument<int>{"int", num});
 
     std::string str{};
     p.add(new Argument<std::string>{"string", str});
+
     if (!p.parse(args))
     {
-         p.print(std::cerr, argv[0]);
-         
+        p.print(std::cerr, argv[0]);
     }
     else
     {
