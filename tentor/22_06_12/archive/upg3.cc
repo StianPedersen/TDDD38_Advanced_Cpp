@@ -2,105 +2,75 @@
 #include <stdexcept>
 #include <sstream>
 
-class Variable_Base
+class Variable_base
 {
-public:
-    virtual ~Variable_Base() = default;
-    virtual void print(std::ostream &os) = 0;
-    virtual Variable_Base *add(Variable_Base *rhs) = 0;
+    public:
+        virtual ~Variable_base() = default;
+        virtual void print(std::ostream& os) const = 0;
+        virtual Variable_base* add(Variable_base* rhs) const
+        {
+            throw std::logic_error("Not a type");
+        }
+    private:
 };
 
-class Number : public Variable_Base
+class Number : public Variable_base
 {
-public:
-    Number(double const &d) : value{d} {};
-    void print(std::ostream &os) override
-    {
-        os << value;
-    }
-    Variable_Base *add(Variable_Base *rhs) override
-    {
-        if (auto p = dynamic_cast<Number *>(rhs))
-        {
-            return new Number{value + p->value};
-        }
-        else
-        {
-            throw std::invalid_argument("Invalid");
-        }
-    }
-
-private:
-    double const value{};
+    public:
+        Number(double const& d) : value{d}{}
+        void print(std::ostream& os) const override;
+        Variable_base* add(Variable_base* rhs) const override;
+        
+    private:
+        double value;
 };
 
-class String : public Variable_Base
+class String : public Variable_base
 {
-public:
-    String(std::string const &s) : value{s} {};
-    void print(std::ostream &os) override
-    {
-        os << value;
-    }
-
-    Variable_Base *add(Variable_Base *rhs) override
-    {
-        if (auto p = dynamic_cast<Number *>(rhs))
-        {
-            std::ostringstream os_new;
-            os_new << value;
-            p->print(os_new);
-            return new String{os_new.str()};
-        }
-        else if (auto p = dynamic_cast<String *>(rhs))
-        {
-            return new String{value + p->value};
-        }
-        else
-        {
-            throw std::invalid_argument("es ist invalid");
-        }
-    }
-
-private:
-    std::string const value;
+    public:
+        String(std::string const& s) : value{s}{};
+        void print(std::ostream&os) const override;
+        Variable_base* add(Variable_base* rhs) const override;
+    private:
+        std::string value;
 };
 
-class Variable
+
+// Functions
+void Number::print(std::ostream& os) const 
 {
-public:
-    Variable(double const &d) : data{new Number{d}} {};
-    Variable(std::string const &s) : data{new String{s}} {};
-    Variable(Variable_Base *vb) : data{vb} {};
+    os<<value;
+}
 
-    Variable operator+(Variable &rhs)
-    {
-        return Variable{data->add(rhs.data)};
-    };
-
-    Variable &operator=(double const &rhs)
-    {
-        delete data;
-        data = new Number{rhs};
-        return *this;
-    };
-    Variable &operator=(std::string const &rhs)
-    {
-        delete data;
-        data = new String{rhs};
-        return *this;
-    };
-
-    friend std::ostream &operator<<(std::ostream &os, Variable const vb);
-
-private:
-    Variable_Base *data;
-};
-
-std::ostream &operator<<(std::ostream &os, Variable const vb)
+Variable_base* Number::add(Variable_base* rhs) const
 {
-    vb.data->print(os);
-    return os;
+    if(auto p = dynamic_cast<Number*>(rhs))
+        return new Number((p->value + this->value));
+    else
+        throw std::logic_error("Not an number");
+}
+
+void String::print(std::ostream& os) const
+{
+    os<<value;
+}
+
+Variable_base* String::add(Variable_base* rhs) const
+{
+    if(auto p = dynamic_cast<Number*>(rhs))
+    {
+        std::ostringstream oss {};
+        p->print(oss);
+        return new String((value + oss.str()));
+    }
+    else if(auto p = dynamic_cast<String*>(rhs))
+    {
+        return new String(value+p->value);
+    }
+    else
+    {
+        throw std::logic_error("Not a number or a string");
+    }
 }
 
 /* Expected output:
@@ -113,22 +83,22 @@ Unknown operator
  */
 int main()
 {
-    Variable var1{"hello"};
-    Variable var2{5.3};
-    Variable var3{"world"};
-    Variable var4{1.2};
+    // Variable var1 { "hello" };
+    // Variable var2 { 5.3 };
+    // Variable var3 { "world" };
+    // Variable var4 { 1.2 };
+    
+    // std::cout << var1 + var2 << std::endl;
+    // std::cout << var1 + var3 << std::endl;
 
-    std::cout << var1 + var2 << std::endl;
-    std::cout << var1 + var3 << std::endl;
-
-    try
-    {
-        std::cout << var2 + var3 << std::endl;
-    }
-    catch (std::exception &e)
-    {
-        std::cerr << e.what() << std::endl;
-    }
-
-    std::cout << var2 + var4 << std::endl;
+    // try
+    // {
+	// std::cout << var2 + var3 << std::endl;
+    // } catch (std::exception& e)
+    // {
+	// std::cerr << e.what() << std::endl;
+    // }
+    
+    // std::cout << var2 + var4 << std::endl;
+    
 }
